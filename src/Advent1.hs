@@ -9,7 +9,10 @@ True
 
 -}
 solve1 :: [Int] -> Int
-solve1 numbers = sum [1 | (prev, next) <- zip numbers (drop 1 numbers), prev < next]
+solve1 = go 0
+  where
+    go n (x : rest@(y : _)) = go (if x < y then n + 1 else n) rest
+    go n _ = n
 
 run1 :: IO ()
 run1 = do
@@ -22,10 +25,10 @@ True
 
 -}
 solve2 :: [Int] -> Int
-solve2 = solve1 . go
+solve2 = go 0
   where
-    go (x : y : z : rest) = x + y + z : go (y : z : rest)
-    go _ = []
+    go n (x : rest@(_ : _ : w : _)) = go (if x < w then n + 1 else n) rest
+    go n _ = n
 
 run2 :: IO ()
 run2 = do
