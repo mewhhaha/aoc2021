@@ -1,6 +1,7 @@
 module Main where
 
 import qualified Advent1
+import qualified Advent2
 
 main :: IO ()
 main = do
@@ -9,3 +10,9 @@ main = do
 
   putStrLn "Advent 1 Part 2"
   Advent1.run2
+
+  putStrLn "Advent 2 Part 1"
+  Advent2.run1
+
+  putStrLn "Advent 2 Part 2"
+  Advent2.run2
