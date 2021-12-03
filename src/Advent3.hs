@@ -7,6 +7,7 @@ module Advent3 where
 import Control.Arrow
 import Data.Bifunctor (bimap)
 import Data.Bits
+import Data.Bool
 import Data.Char (digitToInt)
 import Data.Either (partitionEithers)
 import Data.List (foldl')
@@ -29,7 +30,7 @@ True
 solve1 :: [[Bool]] -> Int
 solve1 = ((*) <$> epsilon <*> gamma) . fmap (> 0) . foldl' count (repeat 0)
   where
-    count = zipWith (\acc x -> if x then acc + 1 else acc - 1)
+    count = zipWith (\acc bit -> acc + bool 1 (- 1) bit)
     epsilon = number
     gamma = number . fmap not
 
@@ -50,13 +51,13 @@ solve2 = (*) <$> ogr <*> co2
     pick cmp (os, zs) = if length os `cmp` length zs then os else zs
 
     calc :: (Int -> Int -> Bool) -> [[Bool]] -> Int
-    calc cmp bits = go (0, bits)
+    calc cmp = go . (0,)
       where
-        go (i, [x]) = number x
-        go (i, xs) =
+        go (i, [n]) = number n
+        go (i, ns) =
           let categorize f n = if f n then Left n else Right n
               pass = pick cmp . partitionEithers . fmap (categorize (!! i))
-           in go (i + 1, pass xs)
+           in go (i + 1, pass ns)
 
     ogr = calc (>=)
     co2 = calc (<)
