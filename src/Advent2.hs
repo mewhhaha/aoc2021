@@ -1,12 +1,9 @@
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Advent2 where
 
-import Data.Bifunctor
 import Data.List (foldl')
-import Data.Monoid
 
 splitBy :: Eq a => a -> [a] -> ([a], [a])
 splitBy delimiter = go []
