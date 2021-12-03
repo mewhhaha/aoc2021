@@ -1,14 +1,9 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TupleSections #-}
 
 module Advent3 where
 
-import Control.Arrow
-import Data.Bifunctor (bimap)
-import Data.Bits
-import Data.Bool
-import Data.Char (digitToInt)
+import Data.Bool (bool)
 import Data.Either (partitionEithers)
 import Data.List (foldl')
 
