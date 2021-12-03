@@ -15,9 +15,7 @@ solve1 = go 0
     go n _ = n
 
 run1 :: IO ()
-run1 = do
-  numbers <- readNumbers
-  print $ solve1 numbers
+run1 = readNumbers >>= print . solve1
 
 {-
 >>> solve2 [199,200,208,210,200,207,240,269,260,263] == 5
@@ -31,6 +29,4 @@ solve2 = go 0
     go n _ = n
 
 run2 :: IO ()
-run2 = do
-  numbers <- readNumbers
-  print $ solve2 numbers
+run2 = readNumbers >>= print . solve2

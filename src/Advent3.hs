@@ -29,9 +29,7 @@ solve1 = ((*) <$> epsilon <*> gamma) . fmap (> 0) . foldl' count (repeat 0)
     gamma = number . fmap not
 
 run1 :: IO ()
-run1 = do
-  instructions <- readBits
-  print $ solve1 instructions
+run1 = readBits >>= print . solve1
 
 {-
 >>> solve2 (parseBits ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"]) == 230
@@ -57,6 +55,4 @@ solve2 = (*) <$> ogr <*> co2
     co2 = calc (<)
 
 run2 :: IO ()
-run2 = do
-  instructions <- readBits
-  print $ solve2 instructions
+run2 = readBits >>= print . solve2

@@ -41,9 +41,7 @@ solve1 = uncurry (*) . foldl' go (0, 0)
       (Up x) -> (position, depth - x)
 
 run1 :: IO ()
-run1 = do
-  instructions <- readInstructions
-  print $ solve1 instructions
+run1 = readInstructions >>= print . solve1
 
 {-
 >>> solve2 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2] == 900
@@ -59,6 +57,4 @@ solve2 = uncurry (*) . fst . foldl' go ((0, 0), 0)
       (Up x) -> ((position, depth), aim - x)
 
 run2 :: IO ()
-run2 = do
-  instructions <- readInstructions
-  print $ solve2 instructions
+run2 = readInstructions >>= print . solve2
