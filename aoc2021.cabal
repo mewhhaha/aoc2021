@@ -26,6 +26,7 @@ library
   exposed-modules:
       Advent1
       Advent2
+      Advent3
   other-modules:
       Paths_aoc2021
   hs-source-dirs:
