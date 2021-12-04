@@ -4,13 +4,15 @@ module Advent3 where
 
 import Data.Bool (bool)
 import Data.Either (partitionEithers)
-import Data.List (foldl')
+import Data.List (foldl', transpose)
 
 parseBits :: [String] -> [[Bool]]
 parseBits = (fmap . fmap) (== '1')
 
-readBits :: IO [[Bool]]
-readBits = parseBits . lines <$> readFile "./data/advent3.txt"
+readData :: IO [[Bool]]
+readData = parseBits . lines <$> readFile "./data/advent3.txt"
+
+run f = readData >>= print . f
 
 number :: [Bool] -> Int
 number = foldl' (\acc x -> acc * 2 + if x then 1 else 0) 0
@@ -22,14 +24,17 @@ True
 -}
 
 solve1 :: [[Bool]] -> Int
-solve1 = ((*) <$> epsilon <*> gamma) . fmap (> 0) . foldl' count (repeat 0)
+solve1 =
+  ((*) <$> epsilon <*> gamma)
+    . fmap ((> 0) . count)
+    . transpose
   where
-    count = zipWith (\acc bit -> acc + bool 1 (- 1) bit)
+    count = foldl' (\acc bit -> acc + bool 1 (-1) bit) 0
     epsilon = number
     gamma = number . fmap not
 
 run1 :: IO ()
-run1 = readBits >>= print . solve1
+run1 = run solve1
 
 {-
 >>> solve2 (parseBits ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"]) == 230
@@ -55,4 +60,4 @@ solve2 = (*) <$> ogr <*> co2
     co2 = calc (<)
 
 run2 :: IO ()
-run2 = readBits >>= print . solve2
+run2 = run solve2

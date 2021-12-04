@@ -21,8 +21,10 @@ readInstruction (fmap (read @Int) . splitBy ' ' -> (command, n)) = case command 
   "up" -> Up n
   _ -> error "Panic!"
 
-readInstructions :: IO [Instruction]
-readInstructions = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
+readData :: IO [Instruction]
+readData = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
+
+run f = readData >>= print . f
 
 {-
 >>> solve1 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2] == 150
@@ -38,7 +40,7 @@ solve1 = uncurry (*) . foldl' go (0, 0)
       (Up x) -> (position, depth - x)
 
 run1 :: IO ()
-run1 = readInstructions >>= print . solve1
+run1 = run solve1
 
 {-
 >>> solve2 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2] == 900
@@ -54,4 +56,4 @@ solve2 = uncurry (*) . fst . foldl' go ((0, 0), 0)
       (Up x) -> ((position, depth), aim - x)
 
 run2 :: IO ()
-run2 = readInstructions >>= print . solve2
+run2 = run solve2

@@ -1,7 +1,9 @@
 module Advent1 where
 
-readNumbers :: IO [Int]
-readNumbers = fmap read . lines <$> readFile "./data/advent1.txt"
+readData :: IO [Int]
+readData = fmap read . lines <$> readFile "./data/advent1.txt"
+
+run f = readData >>= print . f
 
 {-
 >>> solve1 [199,200,208,210,200,207,240,269,260,263] == 7
@@ -15,7 +17,7 @@ solve1 = go 0
     go n _ = n
 
 run1 :: IO ()
-run1 = readNumbers >>= print . solve1
+run1 = run solve1
 
 {-
 >>> solve2 [199,200,208,210,200,207,240,269,260,263] == 5
@@ -29,4 +31,4 @@ solve2 = go 0
     go n _ = n
 
 run2 :: IO ()
-run2 = readNumbers >>= print . solve2
+run2 = run solve2
