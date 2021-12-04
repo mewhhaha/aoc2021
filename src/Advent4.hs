@@ -68,12 +68,12 @@ solve2 :: Bingo -> Word
 solve2 = go
   where
     go (Bingo (n : rest) boards) =
-      let updated = update n <$> boards
-          next = filter (not . validate) updated
-          loser = if null next then Just (last updated) else Nothing
+      let next = update n <$> boards
+          waiting = filter (not . validate) next
+          loser = if null waiting then Just (last next) else Nothing
        in case loser of
             Just board -> n * score board
-            _ -> go (Bingo rest next)
+            _ -> go (Bingo rest waiting)
     go _ = error "Unexpected"
 
 run2 :: IO ()
