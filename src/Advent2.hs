@@ -27,7 +27,7 @@ readData = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
 run f = readData >>= print . f
 
 {-
->>> solve1 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2] == 150
+>>> 150 == solve1 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2]
 True
 
 -}
@@ -43,7 +43,7 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>> solve2 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2] == 900
+>>> 900 == solve2 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2]
 True
 
 -}
