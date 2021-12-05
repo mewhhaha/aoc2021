@@ -71,11 +71,10 @@ solve2 = overlap (> 1) . concatMap coords
     coords (Vent (x1, y1) (x2, y2))
       | x1 == x2 = (x1,) <$> range y1 y2
       | y1 == y2 = (,y1) <$> range x1 x2
-      | y1 > y2 && x1 > x2 = zip [x1, x1 - 1 .. x2] [y1, y1 - 1 .. y2]
-      | y1 < y2 && x1 > x2 = zip [x1, x1 - 1 .. x2] [y1 .. y2]
-      | y1 > y2 && x1 < x2 = zip [x1 .. x2] [y1, y1 - 1 .. y2]
-      | y1 < y2 && x1 < x2 = zip [x1 .. x2] [y1 .. y2]
-      | otherwise = error "Unexpected"
+      | otherwise =
+        let xs = (bool reverse id (x1 > x2) $ range x1 x2)
+            ys = (bool reverse id (y1 > y2) $ range y1 y2)
+         in zip xs ys
 
 run2 :: IO ()
 run2 = run solve2
