@@ -9,6 +9,9 @@ import Data.List (find, foldl', isPrefixOf, stripPrefix, transpose)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromJust, isNothing, listToMaybe)
 
+range :: (Ord a, Enum a) => a -> a -> [a]
+range a b = [min a b .. max a b]
+
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
 splitOn delimiter = go . ([],)
   where
@@ -31,6 +34,7 @@ readData = parseVent . lines <$> readFile "./data/advent5.txt"
 
 run f = readData >>= print . f
 
+overlap :: (Ord k, Num a) => (a -> Bool) -> [k] -> Int
 overlap f =
   length
     . Map.elems
@@ -47,7 +51,6 @@ True
 solve1 :: [Vent] -> Int
 solve1 = overlap (> 1) . concatMap coords
   where
-    range a b = [min a b .. max a b]
     coords (Vent (x1, y1) (x2, y2))
       | x1 == x2 = (x1,) <$> range y1 y2
       | y1 == y2 = (,y1) <$> range x1 x2
@@ -65,7 +68,6 @@ True
 solve2 :: [Vent] -> Int
 solve2 = overlap (> 1) . concatMap coords
   where
-    range a b = [min a b .. max a b]
     coords (Vent (x1, y1) (x2, y2))
       | x1 == x2 = (x1,) <$> range y1 y2
       | y1 == y2 = (,y1) <$> range x1 x2
