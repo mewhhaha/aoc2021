@@ -9,6 +9,11 @@ import Data.List (find, foldl', isPrefixOf, stripPrefix, transpose)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromJust, isNothing, listToMaybe)
 
+type Input = [Vent]
+
+data Vent = Vent (Word, Word) (Word, Word)
+  deriving (Show)
+
 range :: (Ord a, Enum a) => a -> a -> [a]
 range a b = [min a b .. max a b]
 
@@ -19,9 +24,6 @@ splitOn delimiter = go . ([],)
     go (done, rest) | delimiter `isPrefixOf` rest = (reverse done, fromJust . stripPrefix delimiter $ rest)
     go (done, x : rest) = go (x : done, rest)
 
-data Vent = Vent (Word, Word) (Word, Word)
-  deriving (Show)
-
 parseVent :: [String] -> [Vent]
 parseVent = fmap (go . splitOn " -> ")
   where
@@ -29,10 +31,10 @@ parseVent = fmap (go . splitOn " -> ")
       let parse = bimap read read . splitOn ","
        in Vent (parse first) (parse last)
 
-readData :: IO [Vent]
-readData = parseVent . lines <$> readFile "./data/advent5.txt"
+readInput :: IO Input
+readInput = parseVent . lines <$> readFile "./data/advent5.txt"
 
-run f = readData >>= print . f
+run f = readInput >>= print . f
 
 overlap :: (Ord k, Num a) => (a -> Bool) -> [k] -> Int
 overlap f =
@@ -48,7 +50,7 @@ True
 
 -}
 
-solve1 :: [Vent] -> Int
+solve1 :: Input -> Int
 solve1 = overlap (> 1) . concatMap coords
   where
     coords (Vent (x1, y1) (x2, y2))
@@ -65,7 +67,7 @@ True
 
 -}
 
-solve2 :: [Vent] -> Int
+solve2 :: Input -> Int
 solve2 = overlap (> 1) . concatMap coords
   where
     coords (Vent (x1, y1) (x2, y2))

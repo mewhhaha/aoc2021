@@ -10,6 +10,8 @@ type Board = [[Maybe Word]]
 data Bingo = Bingo [Word] [Board]
   deriving (Show)
 
+type Input = Bingo
+
 chunk :: Int -> [a] -> [[a]]
 chunk i [] = []
 chunk i list = let (c, rest) = splitAt i list in c : chunk i rest
@@ -20,10 +22,10 @@ parseBingo (numbers : _ : rest) = Bingo (read ("[" <> numbers <> "]")) boards
     boards = chunk 5 [fmap (Just . read) . words $ l | l <- rest, l /= ""]
 parseBingo _ = error "Unexpected"
 
-readData :: IO Bingo
-readData = parseBingo . lines <$> readFile "./data/advent4.txt"
+readInput :: IO Input
+readInput = parseBingo . lines <$> readFile "./data/advent4.txt"
 
-run f = readData >>= print . f
+run f = readInput >>= print . f
 
 validate :: Board -> Bool
 validate board = horizontal || vertical
@@ -44,7 +46,7 @@ True
 
 -}
 
-solve1 :: Bingo -> Word
+solve1 :: Input -> Word
 solve1 = go
   where
     go (Bingo (n : rest) boards) =
@@ -64,7 +66,7 @@ True
 
 -}
 
-solve2 :: Bingo -> Word
+solve2 :: Input -> Word
 solve2 = go
   where
     go (Bingo (n : rest) boards) =

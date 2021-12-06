@@ -6,13 +6,15 @@ import Data.Bool (bool)
 import Data.Either (partitionEithers)
 import Data.List (foldl', transpose)
 
+type Input = [[Bool]]
+
 parseBits :: [String] -> [[Bool]]
 parseBits = (fmap . fmap) (== '1')
 
-readData :: IO [[Bool]]
-readData = parseBits . lines <$> readFile "./data/advent3.txt"
+readInput :: IO Input
+readInput = parseBits . lines <$> readFile "./data/advent3.txt"
 
-run f = readData >>= print . f
+run f = readInput >>= print . f
 
 number :: [Bool] -> Int
 number = foldl' (\acc x -> acc * 2 + if x then 1 else 0) 0
@@ -23,7 +25,7 @@ True
 
 -}
 
-solve1 :: [[Bool]] -> Int
+solve1 :: Input -> Int
 solve1 =
   ((*) <$> epsilon <*> gamma)
     . fmap ((> 0) . count)
@@ -42,7 +44,7 @@ True
 
 -}
 
-solve2 :: [[Bool]] -> Int
+solve2 :: Input -> Int
 solve2 = (*) <$> ogr <*> co2
   where
     pick cmp (os, zs) = if length os `cmp` length zs then os else zs

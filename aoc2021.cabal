@@ -28,6 +28,7 @@ library
       Advent3
       Advent4
       Advent5
+      Advent6
   other-modules:
       Paths_aoc2021
   hs-source-dirs:

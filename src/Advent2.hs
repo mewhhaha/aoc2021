@@ -5,6 +5,10 @@ module Advent2 where
 
 import Data.List (foldl')
 
+data Instruction = Forward Int | Down Int | Up Int
+
+type Input = [Instruction]
+
 splitBy :: Eq a => a -> [a] -> ([a], [a])
 splitBy delimiter = go []
   where
@@ -13,25 +17,23 @@ splitBy delimiter = go []
       | otherwise = go (x : first) rest
     go first [] = (reverse first, [])
 
-data Instruction = Forward Int | Down Int | Up Int
-
 readInstruction (fmap (read @Int) . splitBy ' ' -> (command, n)) = case command of
   "forward" -> Forward n
   "down" -> Down n
   "up" -> Up n
   _ -> error "Panic!"
 
-readData :: IO [Instruction]
-readData = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
+readInput :: IO Input
+readInput = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
 
-run f = readData >>= print . f
+run f = readInput >>= print . f
 
 {-
 >>> 150 == solve1 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2]
 True
 
 -}
-solve1 :: [Instruction] -> Int
+solve1 :: Input -> Int
 solve1 = uncurry (*) . foldl' go (0, 0)
   where
     go (position, depth) instruction = case instruction of
@@ -47,7 +49,7 @@ run1 = run solve1
 True
 
 -}
-solve2 :: [Instruction] -> Int
+solve2 :: Input -> Int
 solve2 = uncurry (*) . fst . foldl' go ((0, 0), 0)
   where
     go ((position, depth), aim) instruction = case instruction of
