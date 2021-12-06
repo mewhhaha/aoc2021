@@ -28,7 +28,6 @@ readInput = parseFish . split ',' <$> readFile "./data/advent6.txt"
 
 run f = readInput >>= print . f
 
--- This solution is taken from https://www.reddit.com/r/haskell/comments/r9z4qb/advent_of_code_2021_day_06/hnfim87/?utm_source=reddit&utm_medium=web2x&context=3
 offspring :: Int -> Int -> State (Map.Map Int Int) Int
 offspring t days
   | days <= 0 = return 0
@@ -50,7 +49,7 @@ offspring t days
 
 {-
 >>>  solve1 (parseFish ["3","4","3","1","2"])
-5929
+5934
 
 -}
 
