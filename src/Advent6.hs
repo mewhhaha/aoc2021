@@ -1,5 +1,4 @@
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ViewPatterns #-}
 
 module Advent6 where
 
@@ -10,15 +9,13 @@ import qualified Data.Map as Map
 
 type Input = [(Int, Int)]
 
+{-
+>>> split ',' "123,5,3"
+["123","5","3"]
+-}
+
 split :: Eq a => a -> [a] -> [[a]]
-split delimiter = fmap (\f -> f []) . reverse . go []
-  where
-    go acc [] = acc
-    go as (x : xs)
-      | x == delimiter = go (id : as) xs
-      | otherwise = case as of
-        [] -> go [(x :)] xs
-        (a : as) -> go ((a . (x :)) : as) xs
+split delimiter = (filter (/= delimiter) <$>) . groupBy (\_ b -> b /= delimiter)
 
 parseFish :: [String] -> [(Int, Int)]
 parseFish = fmap ((,) <$> read . head <*> length) . group . sort
