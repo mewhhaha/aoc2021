@@ -6,6 +6,7 @@ import Data.Functor ((<&>))
 import Data.List (find, groupBy, isPrefixOf, sort, stripPrefix)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromJust, mapMaybe)
+import Data.Tuple (swap)
 
 data Display = Display [String] [String]
 
@@ -79,16 +80,24 @@ solve2 = fmap sum . mapM go
 
     go (Display input output) = do
       let findNumber x = find ((== length x) . length)
+
       cf <- findNumber one input
       bcdf <- findNumber four input
       acf <- findNumber seven input
       abcdefg <- findNumber eight input
 
-      let abcdf = a : cf ++ bd
-          bd = filter (`notElem` cf) bcdf
+      let abcdf = [a, mb, mc, md, mf]
           [a] = filter (`notElem` cf) acf
-          eg = filter (`notElem` abcdf) abcdefg
-          wirings = [Map.fromList (zip [a, b, c, d, e, f, g] ['a' ..]) | (b, d) <- zip bd (reverse bd), (e, g) <- zip eg (reverse eg), (c, f) <- zip cf (reverse cf)]
+          [mc, mf] = cf
+          [mb, md] = filter (`notElem` cf) bcdf
+          [me, mg] = filter (`notElem` abcdf) abcdefg
+
+          wirings =
+            [ Map.fromList (zip [a, b, c, d, e, f, g] ['a' ..])
+              | (b, d) <- [(mb, md), (md, mb)],
+                (e, g) <- [(me, mg), (mg, me)],
+                (c, f) <- [(mc, mf), (mf, mc)]
+            ]
 
           validate w =
             let rewired = sort . mapMaybe (`Map.lookup` w) <$> input
