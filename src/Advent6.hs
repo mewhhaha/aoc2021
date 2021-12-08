@@ -1,9 +1,8 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Advent6 where
 
 import Control.Monad.State.Strict
 import Data.Bool
+import Data.Functor ((<&>))
 import Data.List
 import qualified Data.Map as Map
 
@@ -20,10 +19,12 @@ split delimiter = (filter (/= delimiter) <$>) . groupBy (\_ b -> b /= delimiter)
 parseFish :: [String] -> [(Int, Int)]
 parseFish = fmap ((,) <$> read . head <*> length) . group . sort
 
-readInput :: IO Input
-readInput = parseFish . split ',' <$> readFile "./data/advent6.txt"
+readInput :: FilePath -> IO Input
+readInput path = parseFish . split ',' <$> readFile path
 
-run f = readInput >>= print . f
+run f = readInput "./data/advent6.txt" >>= print . f
+
+test f g = readInput "./data/advent6_test.txt" <&> g . f
 
 generations :: Int -> [Int]
 generations t = replicate (t + 1) 1 ++ zipWith (+) generations6 generations8
@@ -33,8 +34,8 @@ generations6 = generations 6
 generations8 = generations 8
 
 {-
->>>  solve1 (parseFish ["3","4","3","1","2"])
-5934
+>>>  test solve1 (==5934)
+True
 
 -}
 
@@ -45,8 +46,8 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>>  solve2 (parseFish ["3","4","3","1","2"])
-26984457539
+>>>  test solve2 (==26984457539)
+True
 
 -}
 

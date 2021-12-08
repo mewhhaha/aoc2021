@@ -1,14 +1,18 @@
 module Advent1 where
 
+import Data.Functor ((<&>))
+
 type Input = [Int]
 
-readInput :: IO Input
-readInput = fmap read . lines <$> readFile "./data/advent1.txt"
+readInput :: FilePath -> IO Input
+readInput path = fmap read . lines <$> readFile path
 
-run f = readInput >>= print . f
+run f = readInput "./data/advent1.txt" >>= print . f
+
+test f g = readInput "./data/advent1_test.txt" <&> g . f
 
 {-
->>> 7 == solve1 [199,200,208,210,200,207,240,269,260,263]
+>>> test solve1 (==7)
 True
 
 -}
@@ -22,7 +26,7 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>> 5 == solve2 [199,200,208,210,200,207,240,269,260,263]
+>>> test solve2 (==5)
 True
 
 -}

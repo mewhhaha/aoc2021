@@ -3,6 +3,7 @@
 
 module Advent2 where
 
+import Data.Functor ((<&>))
 import Data.List (foldl')
 
 data Instruction = Forward Int | Down Int | Up Int
@@ -23,13 +24,15 @@ readInstruction (fmap (read @Int) . splitBy ' ' -> (command, n)) = case command 
   "up" -> Up n
   _ -> error "Panic!"
 
-readInput :: IO Input
-readInput = fmap readInstruction . lines <$> readFile "./data/advent2.txt"
+readInput :: FilePath -> IO Input
+readInput path = fmap readInstruction . lines <$> readFile path
 
-run f = readInput >>= print . f
+run f = readInput "./data/advent2.txt" >>= print . f
+
+test f g = readInput "./data/advent2_test.txt" <&> g . f
 
 {-
->>> 150 == solve1 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2]
+>>> test solve1 (==150)
 True
 
 -}
@@ -45,7 +48,7 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>> 900 == solve2 [Forward 5,Down 5,Forward 8,Up 3,Down 8,Forward 2]
+>>> test solve2 (==900)
 True
 
 -}

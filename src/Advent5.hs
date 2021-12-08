@@ -5,6 +5,7 @@ module Advent5 where
 import Data.Bifunctor
 import Data.Bool (bool)
 import Data.Either (partitionEithers)
+import Data.Functor ((<&>))
 import Data.List (find, foldl', isPrefixOf, stripPrefix, transpose)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, fromJust, isNothing, listToMaybe)
@@ -31,10 +32,12 @@ parseVent = fmap (go . splitOn " -> ")
       let parse = bimap read read . splitOn ","
        in Vent (parse first) (parse last)
 
-readInput :: IO Input
-readInput = parseVent . lines <$> readFile "./data/advent5.txt"
+readInput :: FilePath -> IO Input
+readInput path = parseVent . lines <$> readFile path
 
-run f = readInput >>= print . f
+run f = readInput "./data/advent5.txt" >>= print . f
+
+test f g = readInput "./data/advent5_test.txt" <&> g . f
 
 overlap :: (Ord k, Num a) => (a -> Bool) -> [k] -> Int
 overlap f =
@@ -45,7 +48,7 @@ overlap f =
     . fmap (,1)
 
 {-
->>>  5 == solve1 (parseVent ["0,9 -> 5,9","8,0 -> 0,8","9,4 -> 3,4","2,2 -> 2,1","7,0 -> 7,4","6,4 -> 2,0","0,9 -> 2,9","3,4 -> 1,4","0,0 -> 8,8","5,5 -> 8,2"])
+>>>  test solve1 (==5)
 True
 
 -}
@@ -62,7 +65,7 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>>  12 == solve2 (parseVent ["0,9 -> 5,9","8,0 -> 0,8","9,4 -> 3,4","2,2 -> 2,1","7,0 -> 7,4","6,4 -> 2,0","0,9 -> 2,9","3,4 -> 1,4","0,0 -> 8,8","5,5 -> 8,2"])
+>>>  test solve2 (==12)
 True
 
 -}

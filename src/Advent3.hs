@@ -4,6 +4,7 @@ module Advent3 where
 
 import Data.Bool (bool)
 import Data.Either (partitionEithers)
+import Data.Functor ((<&>))
 import Data.List (foldl', transpose)
 
 type Input = [[Bool]]
@@ -11,16 +12,18 @@ type Input = [[Bool]]
 parseBits :: [String] -> [[Bool]]
 parseBits = (fmap . fmap) (== '1')
 
-readInput :: IO Input
-readInput = parseBits . lines <$> readFile "./data/advent3.txt"
+readInput :: FilePath -> IO Input
+readInput path = parseBits . lines <$> readFile path
 
-run f = readInput >>= print . f
+run f = readInput "./data/advent3.txt" >>= print . f
+
+test f g = readInput "./data/advent3_test.txt" <&> g . f
 
 number :: [Bool] -> Int
 number = foldl' (\acc x -> acc * 2 + if x then 1 else 0) 0
 
 {-
->>> 198 == solve1 (parseBits ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"])
+>>> test solve1 (==198)
 True
 
 -}
@@ -39,7 +42,7 @@ run1 :: IO ()
 run1 = run solve1
 
 {-
->>> 230 == solve2 (parseBits ["00100","11110","10110","10111","10101","01111","00111","11100","10000","11001","00010","01010"])
+>>> test solve2 (==230)
 True
 
 -}
