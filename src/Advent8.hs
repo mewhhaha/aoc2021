@@ -97,9 +97,9 @@ solve2 = fmap sum . mapM go
 
       wiring <- find validate wirings
 
-      let decipher x = lookup x $ zip numbers ['0' ..]
+      let decode x = lookup x $ zip numbers ['0' ..]
           rewire = fmap sort . mapM (`Map.lookup` wiring)
-          digit x = rewire x >>= decipher
+          digit x = rewire x >>= decode
 
       read <$> mapM digit output
 
