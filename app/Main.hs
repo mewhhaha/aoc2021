@@ -8,6 +8,7 @@ import qualified Advent5
 import qualified Advent6
 import qualified Advent7
 import qualified Advent8
+import qualified Advent9
 import Control.Monad (zipWithM_)
 
 main :: IO ()
@@ -28,5 +29,6 @@ main = do
       (Advent5.run1, Advent5.run2),
       (Advent6.run1, Advent6.run2),
       (Advent7.run1, Advent7.run2),
-      (Advent8.run1, Advent8.run2)
+      (Advent8.run1, Advent8.run2),
+      (Advent9.run1, Advent9.run2)
     ]

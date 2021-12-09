@@ -59,14 +59,6 @@ run1 = run solve1
 
 type Wiring = Map.Map Char Char
 
--- one = "cf" -- cf wiring
--- four = "bcdf"  -- bd wiring
--- seven = "acf" -- a wiring
--- eight = "abcdefg" -- eg
-
--- validate :: Wiring -> [String] -> Bool
--- validate wiring number = number ==
-
 {-
 >>>  test solve2 id
 Just 61229

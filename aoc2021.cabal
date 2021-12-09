@@ -32,6 +32,7 @@ library
       Advent6
       Advent7
       Advent8
+      Advent9
   other-modules:
       Paths_aoc2021
   hs-source-dirs:
