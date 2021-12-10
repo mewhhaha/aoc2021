@@ -2,7 +2,7 @@ module Advent10 where
 
 import Data.Either (lefts, rights)
 import Data.Functor ((<&>))
-import Data.List (sort)
+import Data.List (foldl', sort)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
@@ -69,12 +69,11 @@ run1 = run solve1
 -}
 
 solve2 :: Input -> Int
-solve2 = middle . sort . fmap (score 0) . rights . fmap validate
+solve2 = middle . sort . fmap score . rights . fmap validate
   where
     middle xs = xs !! (length xs `div` 2)
 
-    score acc [] = acc
-    score acc (x : xs) = score (acc * 5 + points x) xs
+    score xs = foldl' (\acc x -> acc * 5 + points x) 0 xs
       where
         points Curve = 1
         points Square = 2
