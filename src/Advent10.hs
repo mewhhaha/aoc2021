@@ -2,7 +2,7 @@ module Advent10 where
 
 import Data.Either (lefts, rights)
 import Data.Functor ((<&>))
-import Data.List (foldr, sort)
+import Data.List (sort)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
@@ -49,7 +49,7 @@ validate [] _ = error "Unexpected valid syntax"
 -}
 
 solve1 :: Input -> Int
-solve1 = foldr ((+) . score) 0 . lefts . fmap (validate [])
+solve1 = sum . fmap score . lefts . fmap (validate [])
   where
     score Curve = 3
     score Square = 57
