@@ -2,7 +2,7 @@ module Advent10 where
 
 import Data.Either (lefts, rights)
 import Data.Functor ((<&>))
-import Data.List (sort)
+import Data.List (foldr, sort)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
@@ -34,13 +34,14 @@ run f = readInput "./data/advent10.txt" >>= print . f
 
 test f g = readInput "./data/advent10_test.txt" <&> g . f
 
+-- Left is corrupted, right is unfinished
 validate :: [Bracket] -> [Token] -> Either Bracket [Bracket]
 validate stack ((Opening x) : xs) = validate (x : stack) xs
 validate (y : ys) ((Closing x) : xs)
   | y == x = validate ys xs
   | otherwise = Left x
 validate stack [] = Right stack
-validate [] _ = error "Unexpected end of validation"
+validate [] _ = error "Unexpected valid syntax"
 
 {-
 >>>  test solve1 id
@@ -48,7 +49,7 @@ validate [] _ = error "Unexpected end of validation"
 -}
 
 solve1 :: Input -> Int
-solve1 = sum . fmap score . lefts . fmap (validate [])
+solve1 = foldr ((+) . score) 0 . lefts . fmap (validate [])
   where
     score Curve = 3
     score Square = 57
