@@ -25,6 +25,7 @@ library
   exposed-modules:
       Advent0
       Advent1
+      Advent10
       Advent2
       Advent3
       Advent4
