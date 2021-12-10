@@ -35,13 +35,16 @@ run f = readInput "./data/advent10.txt" >>= print . f
 test f g = readInput "./data/advent10_test.txt" <&> g . f
 
 -- Left is corrupted, right is unfinished
-validate :: [Bracket] -> [Token] -> Either Bracket [Bracket]
-validate stack ((Opening x) : xs) = validate (x : stack) xs
-validate (y : ys) ((Closing x) : xs)
-  | y == x = validate ys xs
-  | otherwise = Left x
-validate stack [] = Right stack
-validate [] _ = error "Unexpected valid syntax"
+validate :: [Token] -> Either Bracket [Bracket]
+validate = go []
+  where
+    go :: [Bracket] -> [Token] -> Either Bracket [Bracket]
+    go stack ((Opening x) : xs) = go (x : stack) xs
+    go (y : ys) ((Closing x) : xs)
+      | y == x = go ys xs
+      | otherwise = Left x
+    go stack [] = Right stack
+    go [] _ = error "Unexpected valid syntax"
 
 {-
 >>>  test solve1 id
@@ -49,7 +52,7 @@ validate [] _ = error "Unexpected valid syntax"
 -}
 
 solve1 :: Input -> Int
-solve1 = sum . fmap score . lefts . fmap (validate [])
+solve1 = sum . fmap score . lefts . fmap validate
   where
     score Curve = 3
     score Square = 57
@@ -66,9 +69,10 @@ run1 = run solve1
 -}
 
 solve2 :: Input -> Int
-solve2 = middle . sort . fmap (score 0) . rights . fmap (validate [])
+solve2 = middle . sort . fmap (score 0) . rights . fmap validate
   where
     middle xs = xs !! (length xs `div` 2)
+
     score acc [] = acc
     score acc (x : xs) = score (acc * 5 + points x) xs
       where
