@@ -3,9 +3,6 @@ module Advent10 where
 import Data.Either (lefts, rights)
 import Data.Functor ((<&>))
 import Data.List (foldl', sort)
-import qualified Data.Map.Strict as Map
-import Data.Maybe (mapMaybe)
-import qualified Data.Set as Set
 
 data Bracket = Curve | Square | Curly | Pointy
   deriving (Eq)
