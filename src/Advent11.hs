@@ -13,8 +13,8 @@ readMap :: String -> Map.Map (Int, Int) Int
 readMap = Map.fromList . go 0 0
   where
     go _ _ [] = []
-    go _ y ('\n' : ss) = go 0 (y + 1) ss
-    go x y (s : ss) = ((x, y), digitToInt s) : go (x + 1) y ss
+    go _ y ('\n' : ss) = go 0 (succ y) ss
+    go x y (s : ss) = ((x, y), digitToInt s) : go (succ x) y ss
 
 readInput :: FilePath -> IO Input
 readInput path = readMap <$> readFile path
@@ -24,19 +24,21 @@ run f = readInput "./data/advent11.txt" >>= print . f
 test f g = readInput "./data/advent11_test.txt" <&> g . f
 
 adjacent :: (Int, Int) -> [(Int, Int)]
-adjacent (x, y) = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1), (x + 1, y + 1), (x - 1, y - 1), (x + 1, y - 1), (x - 1, y + 1)]
+adjacent (x, y) = [(succ x, y), (pred x, y), (x, succ y), (x, pred y), (succ x, succ y), (pred x, pred y), (succ x, pred y), (pred x, succ y)]
 
 flash :: Int -> Int
 flash v = if v > 9 then 0 else v
 
-step :: Map.Map (Int, Int) Int -> Map.Map (Int, Int) Int
-step = go <$> initial <*> id <$> energized
-  where
-    isFlashed = (== 0)
+isFlashed :: Int -> Bool
+isFlashed = (== 0)
 
+step :: Map.Map (Int, Int) Int -> Map.Map (Int, Int) Int
+step = go <$> initialReaction <*> id <$> initialPowerup
+  where
     powerup = flash . succ
-    initial = Map.keys . Map.filter isFlashed
-    energized = Map.map powerup
+
+    initialReaction = Map.keys . Map.filter isFlashed
+    initialPowerup = Map.map powerup
 
     go :: [(Int, Int)] -> Map.Map (Int, Int) Int -> Map.Map (Int, Int) Int
     go [] area = area
@@ -55,7 +57,7 @@ step = go <$> initial <*> id <$> energized
 solve1 :: Input -> Int
 solve1 = sum . fmap count . take 100 . tail . iterate step
   where
-    count = Map.size . Map.filter (== 0)
+    count = Map.size . Map.filter isFlashed
 
 run1 :: IO ()
 run1 = run solve1
