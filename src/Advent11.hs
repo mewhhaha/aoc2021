@@ -1,11 +1,9 @@
-{-# LANGUAGE ViewPatterns #-}
-
 module Advent11 where
 
 import Control.Monad ((>=>))
 import Data.Char (digitToInt)
 import Data.Functor ((<&>))
-import Data.List (foldl')
+import Data.List (find, foldl')
 import qualified Data.Map as Map
 import Data.Maybe (catMaybes, fromMaybe, isNothing, mapMaybe)
 
@@ -25,19 +23,28 @@ run f = readInput "./data/advent11.txt" >>= print . f
 
 test f g = readInput "./data/advent11_test.txt" <&> g . f
 
+adjacent :: (Int, Int) -> [(Int, Int)]
 adjacent (x, y) = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1), (x + 1, y + 1), (x - 1, y - 1), (x + 1, y - 1), (x - 1, y + 1)]
 
+flash :: Int -> Int
 flash v = if v > 9 then 0 else v
 
 step :: Map.Map (Int, Int) Int -> Map.Map (Int, Int) Int
-step (Map.map (flash . succ) -> m) = go (Map.keys . Map.filter (== 0) $ m) m
+step = go <$> initial <*> id <$> energized
   where
+    isFlashed = (== 0)
+
+    powerup = flash . succ
+    initial = Map.keys . Map.filter isFlashed
+    energized = Map.map powerup
+
     go :: [(Int, Int)] -> Map.Map (Int, Int) Int -> Map.Map (Int, Int) Int
     go [] area = area
     go (f : fs) area =
-      let unflashed = filter ((`Map.lookup` area) <&> maybe False (/= 0)) $ adjacent f
-          flashed = foldl' (flip (Map.update (pure . flash . succ))) area unflashed
-          reaction = filter ((`Map.lookup` flashed) <&> (== Just 0)) unflashed
+      let unflashed = filter ((`Map.lookup` area) <&> maybe False (not . isFlashed)) $ adjacent f
+
+          flashed = foldl' (flip (Map.update (pure . powerup))) area unflashed
+          reaction = filter ((`Map.lookup` flashed) <&> maybe False isFlashed) unflashed
        in go (reaction ++ fs) flashed
 
 {-
@@ -46,13 +53,9 @@ step (Map.map (flash . succ) -> m) = go (Map.keys . Map.filter (== 0) $ m) m
 -}
 
 solve1 :: Input -> Int
-solve1 = go 0 0
+solve1 = sum . fmap count . take 100 . tail . iterate step
   where
-    go acc 100 _ = acc
-    go acc n m =
-      let next = step m
-          flashes = Map.size $ Map.filter (== 0) next
-       in go (acc + flashes) (succ n) next
+    count = Map.size . Map.filter (== 0)
 
 run1 :: IO ()
 run1 = run solve1
@@ -64,13 +67,7 @@ run1 = run solve1
 -}
 
 solve2 :: Input -> Int
-solve2 m = go 1 m
-  where
-    everyone = Map.size m
-    go n m =
-      let next = step m
-          flashes = Map.size $ Map.filter (== 0) next
-       in if flashes == everyone then n else go (succ n) next
+solve2 = length . takeWhile (sum <&> (/= 0)) . iterate step
 
 run2 :: IO ()
 run2 = run solve2
