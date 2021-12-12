@@ -3,6 +3,7 @@ module Main where
 import qualified Advent1
 import qualified Advent10
 import qualified Advent11
+import qualified Advent12
 import qualified Advent2
 import qualified Advent3
 import qualified Advent4
@@ -34,5 +35,6 @@ main = do
       (Advent8.run1, Advent8.run2),
       (Advent9.run1, Advent9.run2),
       (Advent10.run1, Advent10.run2),
-      (Advent11.run1, Advent11.run2)
+      (Advent11.run1, Advent11.run2),
+      (Advent12.run1, Advent12.run2)
     ]
