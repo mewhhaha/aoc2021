@@ -30,7 +30,7 @@ test f g = readInput "./data/advent12_test.txt" <&> g . f
 data Size = Small | Big
 
 size :: String -> Size
-size = bool Big Small . all isLower
+size node = if all isLower node then Small else Big
 
 {-
 >>> test solve1 id
