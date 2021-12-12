@@ -1,6 +1,7 @@
 module Advent12 where
 
 import Control.Monad.State
+import Data.Bool
 import Data.Char (isLower)
 import Data.Functor ((<&>))
 import Data.List (delete, foldl', groupBy, sort)
@@ -26,8 +27,10 @@ run f = readInput "./data/advent12.txt" >>= print . f
 
 test f g = readInput "./data/advent12_test.txt" <&> g . f
 
-isSmall :: String -> Bool
-isSmall = all isLower
+data Size = Small | Big
+
+size :: String -> Size
+size = bool Big Small . all isLower
 
 {-
 >>> test solve1 id
@@ -41,7 +44,9 @@ solve1 input = go input "start"
     go _ "end" = 1
     go nodes node =
       let continue vs = sum $ fmap (go vs) (nodes Map.! node)
-       in if isSmall node then continue (Map.insert node [] nodes) else continue nodes
+       in case size node of
+            Small -> continue (Map.insert node [] nodes)
+            Big -> continue nodes
 
 run1 :: IO ()
 run1 = run solve1
@@ -62,10 +67,10 @@ solve2 input = Set.size . Set.fromList $ go ExtraUnused input "start"
     go _ _ "end" = [["end"]]
     go extra nodes node =
       let continue e vs = concatMap (fmap (node :) . go e vs) (nodes Map.! node)
-       in case (isSmall node, extra) of
-            (True, ExtraUsed) -> continue ExtraUsed (Map.insert node [] nodes)
-            (True, ExtraUnused) -> continue ExtraUnused (Map.insert node [] nodes) <> continue ExtraUsed nodes
-            _ -> continue extra nodes
+       in case (size node, extra) of
+            (Small, ExtraUsed) -> continue ExtraUsed (Map.insert node [] nodes)
+            (Small, ExtraUnused) -> continue ExtraUnused (Map.insert node [] nodes) <> continue ExtraUsed nodes
+            (Big, _) -> continue extra nodes
 
 run2 :: IO ()
 run2 = run solve2
