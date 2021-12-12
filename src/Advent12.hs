@@ -42,16 +42,16 @@ solve1 input = go input "start"
   where
     go :: Map.Map String [String] -> String -> Int
     go _ "end" = 1
-    go nodes node =
-      let continue vs = sum $ fmap (go vs) (nodes Map.! node)
-       in case size node of
-            Small -> continue (Map.insert node [] nodes)
-            Big -> continue nodes
+    go nodes node = sum (go next <$> (nodes Map.! node))
+      where
+        next = case size node of
+          Small -> Map.insert node [] nodes
+          Big -> nodes
 
 run1 :: IO ()
 run1 = run solve1
 
-data ExtraVisit = ExtraUsed | ExtraUnused
+data Visit = CanBacktrack | CannotBacktrack
   deriving (Eq, Ord, Show)
 
 {-
@@ -61,16 +61,18 @@ data ExtraVisit = ExtraUsed | ExtraUnused
 -}
 
 solve2 :: Input -> Int
-solve2 input = Set.size . Set.fromList $ go ExtraUnused input "start"
+solve2 input = Set.size . Set.fromList $ go input CanBacktrack "start"
   where
-    go :: ExtraVisit -> Map.Map String [String] -> String -> [[String]]
+    go :: Map.Map String [String] -> Visit -> String -> [[String]]
     go _ _ "end" = [["end"]]
-    go extra nodes node =
-      let continue e vs = concatMap (fmap (node :) . go e vs) (nodes Map.! node)
-       in case (size node, extra) of
-            (Small, ExtraUsed) -> continue ExtraUsed (Map.insert node [] nodes)
-            (Small, ExtraUnused) -> continue ExtraUnused (Map.insert node [] nodes) <> continue ExtraUsed nodes
-            (Big, _) -> continue extra nodes
+    go nodes backtrack node =
+      let continue e vs = concatMap (fmap (node :) . go vs e) (nodes Map.! node)
+          next = case size node of
+            Small -> Map.insert node [] nodes
+            Big -> nodes
+       in case (size node, backtrack) of
+            (Small, CanBacktrack) -> continue CanBacktrack next <> continue CannotBacktrack nodes
+            _ -> continue backtrack next
 
 run2 :: IO ()
 run2 = run solve2
