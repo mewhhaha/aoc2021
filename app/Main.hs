@@ -4,6 +4,7 @@ import qualified Advent1
 import qualified Advent10
 import qualified Advent11
 import qualified Advent12
+import qualified Advent13
 import qualified Advent2
 import qualified Advent3
 import qualified Advent4
@@ -36,5 +37,6 @@ main = do
       (Advent9.run1, Advent9.run2),
       (Advent10.run1, Advent10.run2),
       (Advent11.run1, Advent11.run2),
-      (Advent12.run1, Advent12.run2)
+      (Advent12.run1, Advent12.run2),
+      (Advent13.run1, Advent13.run2)
     ]
