@@ -13,11 +13,12 @@ data Display = Display [String] [String]
 type Input = [Display]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go . ([],)
+splitOn delimiter = go id
   where
-    go (done, []) = (reverse done, [])
-    go (done, rest) | delimiter `isPrefixOf` rest = (reverse done, fromJust . stripPrefix delimiter $ rest)
-    go (done, x : rest) = go (x : done, rest)
+    go done [] = (done [], [])
+    go done all@(x : rest) = case stripPrefix delimiter all of
+      Just s -> (done [], s)
+      Nothing -> go ((x :) <&> done) rest
 
 parseDisplay :: (String, String) -> Display
 parseDisplay (input, output) = Display (words input) (words output)

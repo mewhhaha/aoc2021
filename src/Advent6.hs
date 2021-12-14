@@ -9,12 +9,12 @@ import qualified Data.Map as Map
 type Input = [(Int, Int)]
 
 {-
->>> split ',' "123,5,3"
-["123","5","3"]
+>>> split ',' "1,2,3"
+["1","2","3"]
 -}
 
 split :: Eq a => a -> [a] -> [[a]]
-split delimiter = (filter (/= delimiter) <$>) . groupBy (\_ b -> b /= delimiter)
+split d s = let (a, b) = break (== d) s in if null s then [] else a : split d (drop 1 b)
 
 parseFish :: [String] -> [(Int, Int)]
 parseFish = fmap ((,) <$> read . head <*> length) . group . sort

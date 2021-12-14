@@ -6,7 +6,7 @@ import Data.List (groupBy)
 type Input = [Int]
 
 split :: Eq a => a -> [a] -> [[a]]
-split delimiter = (filter (/= delimiter) <$>) . groupBy (\_ b -> b /= delimiter)
+split d s = let (a, b) = break (== d) s in if null s then [] else a : split d (drop 1 b)
 
 readInput :: FilePath -> IO Input
 readInput path = fmap read . split ',' <$> readFile path

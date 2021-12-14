@@ -9,7 +9,7 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 split :: Eq a => a -> [a] -> [[a]]
-split delimiter = (filter (/= delimiter) <$>) . groupBy (\_ b -> b /= delimiter)
+split d s = let (a, b) = break (== d) s in if null s then [] else a : split d (drop 1 b)
 
 type Input = Map.Map String [String]
 

@@ -4,21 +4,21 @@
 module Advent2 where
 
 import Data.Functor ((<&>))
-import Data.List (foldl')
+import Data.List (foldl', stripPrefix)
 
 data Instruction = Forward Int | Down Int | Up Int
 
 type Input = [Instruction]
 
-splitBy :: Eq a => a -> [a] -> ([a], [a])
-splitBy delimiter = go []
+splitOn :: Eq a => [a] -> [a] -> ([a], [a])
+splitOn delimiter = go id
   where
-    go first (x : rest)
-      | x == delimiter = (reverse first, rest)
-      | otherwise = go (x : first) rest
-    go first [] = (reverse first, [])
+    go done [] = (done [], [])
+    go done all@(x : rest) = case stripPrefix delimiter all of
+      Just s -> (done [], s)
+      Nothing -> go ((x :) <&> done) rest
 
-readInstruction (fmap (read @Int) . splitBy ' ' -> (command, n)) = case command of
+readInstruction (fmap (read @Int) . splitOn " " -> (command, n)) = case command of
   "forward" -> Forward n
   "down" -> Down n
   "up" -> Up n

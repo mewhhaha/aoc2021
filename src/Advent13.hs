@@ -2,6 +2,7 @@
 
 module Advent13 where
 
+import Control.Arrow (Arrow (arr), returnA, (&&&), (***), (>>>))
 import Control.Monad (forM, forM_)
 import Data.Bifunctor (bimap, first, second)
 import Data.Functor ((<&>))
@@ -18,15 +19,18 @@ data Fold = Fold Direction Int
 data Paper = Paper [(Int, Int)] [Fold]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go . ([],)
+splitOn delimiter = go id
   where
-    go (done, []) = (reverse done, [])
-    go (done, rest) | delimiter `isPrefixOf` rest = (reverse done, fromJust . stripPrefix delimiter $ rest)
-    go (done, x : rest) = go (x : done, rest)
+    go done [] = (done [], [])
+    go done all@(x : rest) = case stripPrefix delimiter all of
+      Just s -> (done [], s)
+      Nothing -> go ((x :) <&> done) rest
 
 readPaper :: String -> Paper
-readPaper = uncurry Paper . bimap (fmap readPosition . lines) (fmap (readFold . drop (length "fold along ")) . lines) . splitOn "\n\n"
+readPaper = uncurry Paper . parse . splitOn "\n\n"
   where
+    parse = fmap readPosition . lines *** fmap (readFold . fromJust . stripPrefix "fold along ") . lines
+
     readFold ('x' : _ : x) = Fold X (read x)
     readFold ('y' : _ : y) = Fold Y (read y)
     readFold xs = error ("Unexpected line: " <> show xs)
