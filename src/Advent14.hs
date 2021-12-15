@@ -29,12 +29,10 @@ parsePolymer :: String -> Polymer
 parsePolymer = uncurry Polymer . (parseInitial *** parseRules) . splitOn "\n\n"
   where
     parseRules = Map.fromList . fmap parseRule . lines
-      where
-        parseRule s = let ([a, b], [to]) = splitOn " -> " s in ((a, b), to)
+    parseRule s = let ([a, b], [to]) = splitOn " -> " s in ((a, b), to)
 
     parseInitial = Map.fromListWith (+) . fmap (,1) . parsePair
-      where
-        parsePair s = zip s (tail s <> ".")
+    parsePair s = zip s (tail s <> ".")
 
 readInput :: FilePath -> IO Input
 readInput path = parsePolymer <$> readFile path
