@@ -1,22 +1,22 @@
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ViewPatterns #-}
 
 module Advent2 where
 
+import Control.Monad (msum)
 import Data.Functor ((<&>))
-import Data.List (foldl', stripPrefix)
+import Data.List (foldl', inits, stripPrefix, tails)
+import Data.Maybe (fromMaybe)
 
 data Instruction = Forward Int | Down Int | Up Int
 
 type Input = [Instruction]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go id
+splitOn delimiter s = fromMaybe (s, []) . msum . (zipWith trySplit <$> inits <*> tails) $ s
   where
-    go done [] = (done [], [])
-    go done all@(x : rest) = case stripPrefix delimiter all of
-      Just s -> (done [], s)
-      Nothing -> go ((x :) <&> done) rest
+    trySplit a b = (a,) <$> stripPrefix delimiter b
 
 parseInstruction :: String -> Instruction
 parseInstruction (fmap (read @Int) . splitOn " " -> (command, n)) = case command of

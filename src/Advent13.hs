@@ -3,11 +3,11 @@
 module Advent13 where
 
 import Control.Arrow (Arrow (arr), returnA, (&&&), (***), (>>>))
-import Control.Monad (forM, forM_)
+import Control.Monad (forM, forM_, msum)
 import Data.Bifunctor (bimap, first, second)
 import Data.Functor ((<&>))
-import Data.List (foldl', isPrefixOf, scanl', stripPrefix)
-import Data.Maybe (fromJust)
+import Data.List (foldl', inits, isPrefixOf, scanl', stripPrefix, tails)
+import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Set as Set
 
 type Input = Paper
@@ -19,12 +19,9 @@ data Fold = Fold Direction Int
 data Paper = Paper [(Int, Int)] [Fold]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go id
+splitOn delimiter s = fromMaybe (s, []) . msum . (zipWith trySplit <$> inits <*> tails) $ s
   where
-    go done [] = (done [], [])
-    go done all@(x : rest) = case stripPrefix delimiter all of
-      Just s -> (done [], s)
-      Nothing -> go ((x :) <&> done) rest
+    trySplit a b = (a,) <$> stripPrefix delimiter b
 
 parsePaper :: String -> Paper
 parsePaper = uncurry Paper . parse . splitOn "\n\n"

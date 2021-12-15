@@ -2,10 +2,11 @@
 
 module Advent8 where
 
+import Control.Monad (msum)
 import Data.Functor ((<&>))
-import Data.List (find, groupBy, isPrefixOf, sort, stripPrefix)
+import Data.List (find, groupBy, inits, isPrefixOf, sort, stripPrefix, tails)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, fromJust, mapMaybe)
+import Data.Maybe (catMaybes, fromJust, fromMaybe, mapMaybe)
 import Data.Tuple (swap)
 
 data Display = Display [String] [String]
@@ -13,12 +14,9 @@ data Display = Display [String] [String]
 type Input = [Display]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go id
+splitOn delimiter s = fromMaybe (s, []) . msum . (zipWith trySplit <$> inits <*> tails) $ s
   where
-    go done [] = (done [], [])
-    go done all@(x : rest) = case stripPrefix delimiter all of
-      Just s -> (done [], s)
-      Nothing -> go ((x :) <&> done) rest
+    trySplit a b = (a,) <$> stripPrefix delimiter b
 
 parseDisplay :: String -> Display
 parseDisplay s = let (input, output) = splitOn " | " s in Display (words input) (words output)

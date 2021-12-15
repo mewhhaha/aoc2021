@@ -6,11 +6,12 @@
 module Advent14 where
 
 import Control.Arrow ((***))
+import Control.Monad (msum)
 import Data.Bifunctor (bimap, first)
 import Data.Functor ((<&>))
-import Data.List (foldl', group, isSubsequenceOf, scanl', sort, stripPrefix)
+import Data.List (foldl', group, inits, isSubsequenceOf, scanl', sort, stripPrefix, tails)
 import qualified Data.Map.Lazy as Map
-import Data.Maybe (catMaybes, mapMaybe)
+import Data.Maybe (catMaybes, fromMaybe, listToMaybe, mapMaybe)
 import qualified Data.Set as Set
 
 type Input = Polymer
@@ -18,18 +19,15 @@ type Input = Polymer
 data Polymer = Polymer (Map.Map (Char, Char) Int) (Map.Map (Char, Char) Char)
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go id
+splitOn delimiter s = fromMaybe (s, []) . msum . (zipWith trySplit <$> inits <*> tails) $ s
   where
-    go done [] = (done [], [])
-    go done all@(x : rest) = case stripPrefix delimiter all of
-      Just s -> (done [], s)
-      Nothing -> go ((x :) <&> done) rest
+    trySplit a b = (a,) <$> stripPrefix delimiter b
 
 parsePolymer :: String -> Polymer
 parsePolymer = uncurry Polymer . (parseInitial *** parseRules) . splitOn "\n\n"
   where
     parseRules = Map.fromList . fmap parseRule . lines
-    parseRule s = let ([a, b], [to]) = splitOn " -> " s in ((a, b), to)
+    parseRule s = let [[a, b], "->", [to]] = words s in ((a, b), to)
 
     parseInitial = Map.fromListWith (+) . fmap (,1) . parsePair
     parsePair s = zip s (tail s <> ".") -- Extra junk character added so that the last letter gets a pairing that can later be counted
@@ -53,8 +51,8 @@ apply rules acc ((a, b), n) = case Map.lookup (a, b) rules of
   Nothing -> acc
 
 {-
->>>  test solve1 (==1588)
-True
+>>>  test solve1 id
+0
 -}
 
 solve1 :: Input -> Int
@@ -67,7 +65,7 @@ run1 = run solve1
 
 {-
 >>>  test solve2 (==2188189693529)
-True
+False
 
 -}
 solve2 :: Input -> Int

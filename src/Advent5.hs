@@ -2,13 +2,14 @@
 
 module Advent5 where
 
+import Control.Monad (msum)
 import Data.Bifunctor
 import Data.Bool (bool)
 import Data.Either (partitionEithers)
 import Data.Functor ((<&>))
-import Data.List (find, foldl', isPrefixOf, stripPrefix, transpose)
+import Data.List (find, foldl', inits, isPrefixOf, stripPrefix, tails, transpose)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, fromJust, isNothing, listToMaybe)
+import Data.Maybe (catMaybes, fromJust, fromMaybe, isNothing, listToMaybe)
 
 type Input = [Vent]
 
@@ -19,12 +20,9 @@ range :: (Ord a, Enum a) => a -> a -> [a]
 range a b = [min a b .. max a b]
 
 splitOn :: Eq a => [a] -> [a] -> ([a], [a])
-splitOn delimiter = go id
+splitOn delimiter s = fromMaybe (s, []) . msum . (zipWith trySplit <$> inits <*> tails) $ s
   where
-    go done [] = (done [], [])
-    go done all@(x : rest) = case stripPrefix delimiter all of
-      Just s -> (done [], s)
-      Nothing -> go ((x :) <&> done) rest
+    trySplit a b = (a,) <$> stripPrefix delimiter b
 
 parseVent :: [String] -> [Vent]
 parseVent = fmap (go . splitOn " -> ")
