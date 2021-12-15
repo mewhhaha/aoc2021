@@ -32,7 +32,7 @@ parsePolymer = uncurry Polymer . (parseInitial *** parseRules) . splitOn "\n\n"
     parseRule s = let ([a, b], [to]) = splitOn " -> " s in ((a, b), to)
 
     parseInitial = Map.fromListWith (+) . fmap (,1) . parsePair
-    parsePair s = zip s (tail s <> ".")
+    parsePair s = zip s (tail s <> ".") -- Extra junk character added so that the last letter gets a pairing that can later be counted
 
 readInput :: FilePath -> IO Input
 readInput path = parsePolymer <$> readFile path
