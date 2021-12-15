@@ -12,15 +12,15 @@ import qualified Data.Set as Set
 
 type Input = Map.Map (Int, Int) Int
 
-readMap :: String -> Map.Map (Int, Int) Int
-readMap = go 0 0 mempty
+parseMap :: String -> Map.Map (Int, Int) Int
+parseMap = go 0 0 mempty
   where
     go _ _ acc [] = acc
     go x y acc ('\n' : ss) = go 0 (y + 1) acc ss
     go x y acc (s : ss) = go (x + 1) y (Map.insert (x, y) (digitToInt s) acc) ss
 
 readInput :: FilePath -> IO Input
-readInput path = readMap <$> readFile path
+readInput path = parseMap <$> readFile path
 
 run f = readInput "./data/advent9.txt" >>= print . f
 

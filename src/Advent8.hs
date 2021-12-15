@@ -20,11 +20,11 @@ splitOn delimiter = go id
       Just s -> (done [], s)
       Nothing -> go ((x :) <&> done) rest
 
-parseDisplay :: (String, String) -> Display
-parseDisplay (input, output) = Display (words input) (words output)
+parseDisplay :: String -> Display
+parseDisplay s = let (input, output) = splitOn " | " s in Display (words input) (words output)
 
 readInput :: FilePath -> IO Input
-readInput path = fmap (parseDisplay . splitOn " | ") . lines <$> readFile path
+readInput path = fmap parseDisplay . lines <$> readFile path
 
 run f = readInput "./data/advent8.txt" >>= print . f
 

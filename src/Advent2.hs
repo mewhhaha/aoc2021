@@ -18,14 +18,15 @@ splitOn delimiter = go id
       Just s -> (done [], s)
       Nothing -> go ((x :) <&> done) rest
 
-readInstruction (fmap (read @Int) . splitOn " " -> (command, n)) = case command of
+parseInstruction :: String -> Instruction
+parseInstruction (fmap (read @Int) . splitOn " " -> (command, n)) = case command of
   "forward" -> Forward n
   "down" -> Down n
   "up" -> Up n
   _ -> error "Panic!"
 
 readInput :: FilePath -> IO Input
-readInput path = fmap readInstruction . lines <$> readFile path
+readInput path = fmap parseInstruction . lines <$> readFile path
 
 run f = readInput "./data/advent2.txt" >>= print . f
 

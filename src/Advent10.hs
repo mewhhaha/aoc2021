@@ -12,20 +12,21 @@ data Token = Opening Bracket | Closing Bracket
 
 type Input = [[Token]]
 
-readTokens = fmap readToken
+parseTokens :: String -> [Token]
+parseTokens = fmap parseToken
   where
-    readToken '(' = Opening Curve
-    readToken '[' = Opening Square
-    readToken '{' = Opening Curly
-    readToken '<' = Opening Pointy
-    readToken ')' = Closing Curve
-    readToken ']' = Closing Square
-    readToken '}' = Closing Curly
-    readToken '>' = Closing Pointy
-    readToken x = error ("Unexpected character: " <> show x)
+    parseToken '(' = Opening Curve
+    parseToken '[' = Opening Square
+    parseToken '{' = Opening Curly
+    parseToken '<' = Opening Pointy
+    parseToken ')' = Closing Curve
+    parseToken ']' = Closing Square
+    parseToken '}' = Closing Curly
+    parseToken '>' = Closing Pointy
+    parseToken x = error ("Unexpected character: " <> show x)
 
 readInput :: FilePath -> IO Input
-readInput path = fmap readTokens . lines <$> readFile path
+readInput path = fmap parseTokens . lines <$> readFile path
 
 run f = readInput "./data/advent10.txt" >>= print . f
 

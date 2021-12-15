@@ -26,19 +26,19 @@ splitOn delimiter = go id
       Just s -> (done [], s)
       Nothing -> go ((x :) <&> done) rest
 
-readPaper :: String -> Paper
-readPaper = uncurry Paper . parse . splitOn "\n\n"
+parsePaper :: String -> Paper
+parsePaper = uncurry Paper . parse . splitOn "\n\n"
   where
-    parse = fmap readPosition . lines *** fmap (readFold . fromJust . stripPrefix "fold along ") . lines
+    parse = fmap parsePosition . lines *** fmap (parseFold . fromJust . stripPrefix "fold along ") . lines
 
-    readFold ('x' : _ : x) = Fold X (read x)
-    readFold ('y' : _ : y) = Fold Y (read y)
-    readFold xs = error ("Unexpected line: " <> show xs)
+    parseFold ('x' : _ : x) = Fold X (read x)
+    parseFold ('y' : _ : y) = Fold Y (read y)
+    parseFold xs = error ("Unexpected line: " <> show xs)
 
-    readPosition = bimap read read . splitOn ","
+    parsePosition = bimap read read . splitOn ","
 
 readInput :: FilePath -> IO Input
-readInput path = readPaper <$> readFile path
+readInput path = parsePaper <$> readFile path
 
 run f = readInput "./data/advent13.txt" >>= print . f
 

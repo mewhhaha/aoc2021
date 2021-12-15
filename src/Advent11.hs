@@ -9,15 +9,15 @@ import Data.Maybe (catMaybes, fromMaybe, isNothing, mapMaybe)
 
 type Input = Map.Map (Int, Int) Int
 
-readMap :: String -> Map.Map (Int, Int) Int
-readMap = Map.fromList . go 0 0
+parseMap :: String -> Map.Map (Int, Int) Int
+parseMap = Map.fromList . go 0 0
   where
     go _ _ [] = []
     go _ y ('\n' : ss) = go 0 (succ y) ss
     go x y (s : ss) = ((x, y), digitToInt s) : go (succ x) y ss
 
 readInput :: FilePath -> IO Input
-readInput path = readMap <$> readFile path
+readInput path = parseMap <$> readFile path
 
 run f = readInput "./data/advent11.txt" >>= print . f
 

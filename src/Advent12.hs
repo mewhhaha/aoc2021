@@ -13,15 +13,15 @@ split d s = let (a, b) = break (== d) s in if null s then [] else a : split d (d
 
 type Input = Map.Map String [String]
 
-readNodes :: [String] -> Map.Map String [String]
-readNodes = Map.insert "end" [] . fmap (filter (/= "start")) . foldl1 (Map.unionWith (<>)) . fmap go
+parseNodes :: String -> Map.Map String [String]
+parseNodes = Map.insert "end" [] . fmap (filter (/= "start")) . foldl1 (Map.unionWith (<>)) . fmap parseNode . lines
   where
-    go line = case split '-' line of
+    parseNode line = case split '-' line of
       [from, to] -> Map.fromList [(from, [to]), (to, [from])]
       _ -> error ("Unexpected input: " <> show line)
 
 readInput :: FilePath -> IO Input
-readInput path = readNodes . lines <$> readFile path
+readInput path = parseNodes <$> readFile path
 
 run f = readInput "./data/advent12.txt" >>= print . f
 
