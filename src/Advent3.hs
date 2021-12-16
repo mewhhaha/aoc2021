@@ -19,8 +19,8 @@ run f = readInput "./data/advent3.txt" >>= print . f
 
 test f g = readInput "./data/advent3_test.txt" <&> g . f
 
-number :: [Bool] -> Int
-number = foldl' (\acc x -> acc * 2 + if x then 1 else 0) 0
+decimal :: [Bool] -> Int
+decimal = foldl' (\acc x -> acc * 2 + if x then 1 else 0) 0
 
 {-
 >>> test solve1 (==198)
@@ -35,8 +35,8 @@ solve1 =
     . transpose
   where
     count = foldl' (\acc bit -> acc + bool 1 (-1) bit) 0
-    epsilon = number
-    gamma = number . fmap not
+    epsilon = decimal
+    gamma = decimal . fmap not
 
 run1 :: IO ()
 run1 = run solve1
@@ -55,7 +55,7 @@ solve2 = (*) <$> ogr <*> co2
     calc :: (Int -> Int -> Bool) -> [[Bool]] -> Int
     calc cmp = go . (0,)
       where
-        go (i, [n]) = number n
+        go (i, [n]) = decimal n
         go (i, ns) =
           let categorize f n = if f n then Left n else Right n
               pass = pick cmp . partitionEithers . fmap (categorize (!! i))

@@ -7,6 +7,7 @@ import qualified Advent12
 import qualified Advent13
 import qualified Advent14
 import qualified Advent15
+import qualified Advent16
 import qualified Advent2
 import qualified Advent3
 import qualified Advent4
@@ -42,5 +43,6 @@ main = do
       (Advent12.run1, Advent12.run2),
       (Advent13.run1, Advent13.run2),
       (Advent14.run1, Advent14.run2),
-      (Advent15.run1, Advent15.run2)
+      (Advent15.run1, Advent15.run2),
+      (Advent16.run1, Advent16.run2)
     ]
